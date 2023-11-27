@@ -153,7 +153,7 @@ void CglimTestDlg::OnBnClickedBtnImage()
     int nPitch = m_image.GetPitch();
     unsigned char* fm = (unsigned char*)m_image.GetBits();
 
-    //memset(fm, 0xff, nWidth * nHeight);
+    memset(fm, 0xff, nWidth * nHeight);
 
     UpdateDisplay();
 }
@@ -175,17 +175,18 @@ void CglimTestDlg::moveRect()
     int nSttY = rand() % (nHeight - 2 * nRadius);
     unsigned char* fm = (unsigned char*)m_image.GetBits();
     int nSize = 20;
-    CPoint ptCenter = findCenter();
+
+    RedrawWindow();
 
     memset(fm, 0xff, nWidth * nHeight);
 
     drawCircle(fm, nSttX, nSttY, nRadius, nGray);
 
-    drawCross(fm, nSttX + nRadius, nSttY + nRadius, nSize, RGB(0, 0, 255));
+    drawCross(fm, nSttX + nRadius, nSttY + nRadius, nSize, nGray);
+
+    CPoint ptCenter = findCenter();
 
     drawYellowCircle(ptCenter, nRadius);
-
-    UpdateDisplay();
 }
 
 void CglimTestDlg::OnBnClickedBtnAction()
@@ -218,10 +219,7 @@ void CglimTestDlg::drawCircle(unsigned char* fm, int x, int y, int nRadius, int 
         }
     }
 
-    CPen pen;
-    pen.CreatePen(PS_SOLID, 1, RGB(0xff, 0, 0));
-    CPen* pOldPen = dc.SelectObject(&pen);
-
+    UpdateDisplay();
 }
 
 bool CglimTestDlg::isInCircle(int i, int j, int nCenterX, int nCenterY, int nRadius)
@@ -255,6 +253,8 @@ void CglimTestDlg::drawCross(unsigned char* fm, int x, int y, int nSize, int nCo
             fm[j * nPitch + x] = nColor;
         }
     }
+
+    UpdateDisplay();
 }
 
 CPoint CglimTestDlg::findCenter()
@@ -290,7 +290,7 @@ CPoint CglimTestDlg::findCenter()
 void CglimTestDlg::drawYellowCircle(CPoint ptCenter, int nRadius)
 {
     CClientDC dc(this);
-    
+
     //원의 내부를 투명하게 하기 위하여 CBrush 준비
     CBrush brush;
     brush.CreateStockObject(NULL_BRUSH);
@@ -307,5 +307,4 @@ void CglimTestDlg::drawYellowCircle(CPoint ptCenter, int nRadius)
 
     dc.SelectObject(pOldBrush);
     dc.SelectObject(pOldPen);
-    m_image.Draw(dc, 0, 0);
 }
